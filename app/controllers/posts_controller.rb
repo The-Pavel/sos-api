@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
   require "json"
+  require "open-uri"
   require "ibm_watson/language_translator_v3"
   include IBMWatson
 
@@ -8,11 +9,21 @@ class PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
+
     @post.language = identify_language(@post.description)
     #hardcoding user id since miniapp is unpublished
     @post.user = User.last
     if @post.save
       render :show, status: :created
+      #AMAP save post lat/long
+      addr = @post.location
+      address_encode = URI.encode("#{addr}output=JSON&key=27df61d7d7a623d9d3ef412a48ee6218")
+      url = "https://restapi.amap.com/v3/geocode/geo?address=#{address_encode}"
+      serialize = open(url).read
+      parse = JSON.parse(serialize)
+      location = parse["geocodes"][0]["location"].split(",")
+      @post.update lat: location[1]
+      @post.update long: location[0]
     else
       render_error(@post)
     end
@@ -85,6 +96,8 @@ class PostsController < ApplicationController
   def init_translator
     # returns an instance of the Watson translator
 
+
+#IBM LANGUAGE TRANSLATOR
     creds = {
       "apikey": "lgEFBcnLjSPMPOlr9ODPXSnPHxkUJvBgRERzWJO6NqkP",
       "iam_apikey_description": "Auto-generated for key f9ccb07f-0f5c-4aad-8cac-51b950b33b87",
