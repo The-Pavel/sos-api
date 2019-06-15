@@ -6,19 +6,13 @@ class PostsController < ApplicationController
   before_action :set_post, only: [ :add_comment, :show, :update, :destroy ]
   skip_before_action :verify_authenticity_token
 
-  require "json"
-  require "ibm_watson/language_translator_v3"
-  include IBMWatson
-
-
-
   def create
     @post = Post.new(post_params)
     @post.language = identify_language(@post.description)
     if @post.save
       render :show, status: :created
     else
-      render_error
+      render_error(@post)
     end
   end
 
@@ -26,7 +20,7 @@ class PostsController < ApplicationController
     if @post.update(post_params)
       render :show
     else
-      render_error
+      render_error(@post)
     end
   end
 
@@ -58,11 +52,16 @@ class PostsController < ApplicationController
     if @comment.save
       render :index
     else
-      render :json => { :errors => @comment.errors.full_messages }
+      render_error(@comment)
     end
   end
 
   private
+
+  def render_error(object)
+    render json: { errors: object.errors.full_messages },
+      status: :unprocessable_entity
+  end
 
   def set_post
     @post = Post.find(post_params[:id])
