@@ -26,5 +26,5 @@ post1 = Post.create(description: "My office can house a few people. All are welc
 
 post2 = Post.create(description: "This is KFC, you can sleep in the restaurant and use the kitchen to cook.", capacity: (2..20).to_a.sample, location: "KFC Minghang 1", contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'en', user: User.first, lat: "31.11258", long: "121.38474")
 
-Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['zh', 'en'].sample, post: post1)
-Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['zh', 'en'].sample, post: post2)
+Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['en'].sample, post: post1)
+Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['en'].sample, post: post2)
