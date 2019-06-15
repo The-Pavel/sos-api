@@ -1,4 +1,4 @@
-json.extract! @post, :id, :description, :capacity, :location, :contact_number, :is_full, :user_id, :language
+json.extract! @post, :id, :description, :capacity, :location, :contact_number, :is_full, :user_id, :language, :lat, :long
 
 json.user_nickname @post.user, :nickname
 
