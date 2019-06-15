@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
-  resource :posts
+  resources :posts, defaults: { format: :json }, only: [ :index, :create, :update, :destroy ]
+  post 'posts/:id', action: :add_comment, controller: 'posts', as: 'add_comment'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
