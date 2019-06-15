@@ -20,11 +20,11 @@ puts "cleared"
   # Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['zh', 'en'].sample, post: post)
 end
 
-Post.create(description: "你好，你过来吧！", capacity: (2..20).to_a.sample, location: Faker::Address.full_address, contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'zh', user: User.first, lat: "31.11325", long: "121.38206")
+Post.create(description: "我这里是一家药房", capacity: (2..20).to_a.sample, location: "华民大药房", contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'zh', user: User.first, lat: "31.11444", long: "121.37962")
 
-post1 = Post.create(description: "Shanghai", capacity: (2..20).to_a.sample, location: "Shanghai Pearl Tower", contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'en', user: User.first, lat: "31.240718842", long: "121.501045227")
+post1 = Post.create(description: "My office can house a few people. All are welcome.", capacity: (2..20).to_a.sample, location: "Yinghua International Plaza", contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'en', user: User.first, lat: "31.11325", long: "121.38206")
 
-post2 = Post.create(description: "Beijing", capacity: (2..20).to_a.sample, location: "Tian An Men", contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'en', user: User.first, lat: "39.907333374", long: "116.391082764")
+post2 = Post.create(description: "This is KFC, you can sleep in the restaurant and use the kitchen to cook.", capacity: (2..20).to_a.sample, location: "KFC Minghang 1", contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'en', user: User.first, lat: "31.11258", long: "121.38474")
 
 Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['zh', 'en'].sample, post: post1)
 Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['zh', 'en'].sample, post: post2)
