@@ -3,22 +3,47 @@ require "ibm_watson/language_translator_v3"
 include IBMWatson
 
 class PostsController < ApplicationController
-  before_action :set_post, only: [ :add_comment ]
+  before_action :set_post, only: [ :add_comment, :show, :update, :destroy ]
   skip_before_action :verify_authenticity_token
 
+
   def create
+    @post = Post.new(post_params)
+    if @post.save
+      render :show, status: :created
+    else
+      render_error
+    end
   end
 
   def update
+    if @post.update(post_params)
+      render :show
+    else
+      render_error
+    end
   end
 
   def index
+    @posts = Post.all
   end
 
   def show
   end
 
   def destroy
+    @post.destroy
+    head :no_content
+  end
+
+  private
+
+  def set_post
+    @post = Post.find(params[:id])
+  end
+
+  def post_params
+    params.require(:post).permit(:description, :capacity, :location, :contact_number, :is_full, :language, :user_id)
   end
 
   def add_comment
@@ -37,14 +62,12 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    params.require(:post).permit(:user_id, :description, :capacity, :location, :contact_number, :is_full, :id)
+    params.require(:post).permit(:user_id, :description, :capacity, :location, :language, :contact_number, :is_full, :id)
   end
 
   def comment_params
-    params.require(:comment).permit(:comment, :post_id, :user_id)
+    params.require(:comment).permit(:comment, :post_id, :language, :user_id)
   end
-
-  private
 
   def init_translator
     # returns an instance of the Watson translator
