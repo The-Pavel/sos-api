@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  description: MyString
+  capacity: 1
+  location: MyString
+  contact_number: MyString
+  is_full: false
+  user: one
+
+two:
+  description: MyString
+  capacity: 1
+  location: MyString
+  contact_number: MyString
+  is_full: false
+  user: two
