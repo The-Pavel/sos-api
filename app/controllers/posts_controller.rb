@@ -9,6 +9,8 @@ class PostsController < ApplicationController
   def create
     @post = Post.new(post_params)
     @post.language = identify_language(@post.description)
+    #hardcoding user id since miniapp is unpublished
+    @post.user = User.last
     if @post.save
       render :show, status: :created
     else
@@ -69,7 +71,7 @@ class PostsController < ApplicationController
 
   def post_params
     if params[:post].present?
-      params.require(:post).permit(:user_id, :description, :capacity, :location, :language, :contact_number, :is_full, :id)
+      params.require(:post).permit(:user_id, :description, :capacity, :location, :language, :contact_number, :is_full, :id, :lat, :long)
     else
       params.permit(:id)
     end
