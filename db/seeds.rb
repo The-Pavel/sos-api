@@ -21,7 +21,5 @@ puts "cleared"
 end
 
 Post.create(description: "你好，你过来吧！", capacity: (2..20).to_a.sample, location: Faker::Address.full_address, contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'zh', user: User.first)
-Post.create(location: "商务写字楼", lat: "39.990464", long: "116.481488")
-Post.create(location: "Shanghai Pearl Tower", lat: "31.240718842", long: "121.501045227")
-Post.create(location: "Tian An Men", lat: "39.907333374", long: "116.391082764")
-
+Post.create(description: "Shanghai", capacity: (2..20).to_a.sample, location: "Shanghai Pearl Tower", contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'en', user: User.first, lat: "31.240718842", long: "121.501045227")
+Post.create(description: "Beijing", capacity: (2..20).to_a.sample, location: "Tian An Men", contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'en', user: User.first, lat: "39.907333374", long: "116.391082764")

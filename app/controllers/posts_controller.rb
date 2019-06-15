@@ -1,11 +1,11 @@
 class PostsController < ApplicationController
-  before_action :set_post, only: [ :add_comment, :show, :update, :destroy ]
-  skip_before_action :verify_authenticity_token
-
   require "json"
   require "open-uri"
   require "ibm_watson/language_translator_v3"
   include IBMWatson
+
+  before_action :set_post, only: [ :add_comment, :show, :update, :destroy ]
+  skip_before_action :verify_authenticity_token
 
   def create
     @post = Post.new(post_params)
@@ -74,8 +74,13 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    params.require(:post).permit(:user_id, :description, :capacity, :location, :language, :contact_number, :is_full, :id, :lat, :long)
+    if params[:post].present?
+      params.require(:post).permit(:user_id, :description, :capacity, :location, :language, :contact_number, :is_full, :id, :lat, :long)
+    else
+      params.permit(:id)
+    end
   end
+
 
   def comment_params
     params.require(:comment).permit(:comment, :post_id, :language, :user_id)
@@ -84,6 +89,8 @@ class PostsController < ApplicationController
   def init_translator
     # returns an instance of the Watson translator
 
+
+#IBM LANGUAGE TRANSLATOR
     creds = {
       "apikey": "lgEFBcnLjSPMPOlr9ODPXSnPHxkUJvBgRERzWJO6NqkP",
       "iam_apikey_description": "Auto-generated for key f9ccb07f-0f5c-4aad-8cac-51b950b33b87",
@@ -118,25 +125,4 @@ class PostsController < ApplicationController
     )
     return translation.result["translations"][0]["translation"]
   end
-
-#AMAP
-      addr = @post.location
-      address_encode = URI.encode("#{addr}output=JSON&key=27df61d7d7a623d9d3ef412a48ee6218")
-      url = "https://restapi.amap.com/v3/geocode/geo?address=#{address_encode}"
-      serialize = open(url).read
-      parse = JSON.parse(serialize)
-      location = parse["geocodes"][0]["location"].split(",")
-      @post.update lat: location[1]
-      @post.update long: location[0]
 end
-
-
-https://restapi.amap.com/v3/direction/walking?origin={origin}&destination={destination}&key=27df61d7d7a623d9d3ef412a48ee6218
-https://restapi.amap.com/v3/direction/walking?origin=116.481028,39.989643&destination=116.434446,39.90816&key=27df61d7d7a623d9d3ef412a48ee6218
-
-origin = "116.481028,39.989643"
-destination = "116.434446,39.90816"
-url = "https://restapi.amap.com/v3/direction/walking?origin=#{origin}&destination=#{destination}&key=27df61d7d7a623d9d3ef412a48ee6218"
-serialize = open(url).read
-parse = JSON.parse(serialize)
-distance = parse["route"]["paths"][0]["distance"]
