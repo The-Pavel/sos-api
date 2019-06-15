@@ -15,15 +15,6 @@ class PostsController < ApplicationController
     @post.user = User.last
     if @post.save
       render :show, status: :created
-      #AMAP save post lat/long
-      addr = @post.location
-      address_encode = URI.encode("#{addr}output=JSON&key=27df61d7d7a623d9d3ef412a48ee6218")
-      url = "https://restapi.amap.com/v3/geocode/geo?address=#{address_encode}"
-      serialize = open(url).read
-      parse = JSON.parse(serialize)
-      location = parse["geocodes"][0]["location"].split(",")
-      @post.update lat: location[1]
-      @post.update long: location[0]
     else
       render_error(@post)
     end
@@ -39,6 +30,9 @@ class PostsController < ApplicationController
 
   def index
     # getting language from url query
+    unless params[:lang].present?
+      @posts = Post.all.where('created_at >= ?', 10.days.ago)
+    end
     user_language = params[:lang]
     # filtering posts from last 10 days
     posts = Post.all.where('created_at >= ?', 10.days.ago)
@@ -47,12 +41,23 @@ class PostsController < ApplicationController
       # checking posts language vs user language
       unless post.language == user_language
         post.description = translate_string(post.language, user_language, post.description)
+        post.location = translate_string(post.language, user_language, post.location)
       end
       @posts << post
     end
   end
 
   def show
+    user_language = params[:lang]
+    unless @post.language == user_language
+      @post.description = translate_string(@post.language, user_language, @post.description)
+      @post.location = translate_string(@post.language, user_language, @post.location)
+      @post.comments.each do |comment|
+        unless comment.language == user_language
+         comment.comment = translate_string(comment.language, user_language, comment.comment)
+        end
+      end
+    end
   end
 
   def destroy
@@ -62,6 +67,7 @@ class PostsController < ApplicationController
 
   def add_comment
     @comment = Comment.new(nickname: User.find(comment_params[:user_id]).nickname, comment: comment_params[:comment], post: Post.find(comment_params[:post_id]))
+    @comment.language = identify_language(@comment.comment)
     if @comment.save
       render :index
     else
@@ -87,7 +93,6 @@ class PostsController < ApplicationController
       params.permit(:id)
     end
   end
-
 
   def comment_params
     params.require(:comment).permit(:comment, :post_id, :language, :user_id)
