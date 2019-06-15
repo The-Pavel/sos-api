@@ -50,8 +50,9 @@ class PostsController < ApplicationController
       @post.description = translate_string(post.language, user_language, post.description)
       @post.location = translate_string(post.language, user_language, post.location)
       @post.comments.each do |comment|
-      unless comment.language == user_language
-        comment.comment = translate_string(@post.language, user_language, comment.comment)
+        unless comment.language == user_language
+         comment.comment = translate_string(@post.language, user_language, comment.comment)
+        end
       end
     end
   end
