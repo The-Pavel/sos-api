@@ -3,16 +3,27 @@ class PostsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   require "json"
+  require "open-uri"
   require "ibm_watson/language_translator_v3"
   include IBMWatson
 
-
-
   def create
     @post = Post.new(post_params)
+
+
+
     @post.language = identify_language(@post.description)
     if @post.save
       render :show, status: :created
+      #AMAP save lat/long
+      addr = @post.location
+      address_encode = URI.encode("#{addr}output=JSON&key=27df61d7d7a623d9d3ef412a48ee6218")
+      url = "https://restapi.amap.com/v3/geocode/geo?address=#{address_encode}"
+      serialize = open(url).read
+      parse = JSON.parse(serialize)
+      location = parse["geocodes"][0]["location"].split(",")
+      @post.update lat: location[1]
+      @post.update long: location[0]
     else
       render_error
     end
@@ -109,4 +120,7 @@ class PostsController < ApplicationController
     )
     return translation.result["translations"][0]["translation"]
   end
+
+#AMAP
+
 end
