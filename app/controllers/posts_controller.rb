@@ -1,8 +1,8 @@
-require "json"
-require "ibm_watson/language_translator_v3"
-include IBMWatson
-
 class PostsController < ApplicationController
+  require "json"
+  require "ibm_watson/language_translator_v3"
+  include IBMWatson
+
   before_action :set_post, only: [ :add_comment, :show, :update, :destroy ]
   skip_before_action :verify_authenticity_token
 
@@ -52,8 +52,13 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    params.require(:post).permit(:user_id, :description, :capacity, :location, :language, :contact_number, :is_full, :id)
+    if params[:post].present?
+      params.require(:post).permit(:user_id, :description, :capacity, :location, :language, :contact_number, :is_full, :id)
+    else
+      params.permit(:id)
+    end
   end
+
 
   def comment_params
     params.require(:comment).permit(:comment, :post_id, :language, :user_id)
