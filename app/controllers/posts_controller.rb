@@ -1,14 +1,16 @@
-require "json"
-require "ibm_watson/language_translator_v3"
-include IBMWatson
-
 class PostsController < ApplicationController
   before_action :set_post, only: [ :add_comment, :show, :update, :destroy ]
   skip_before_action :verify_authenticity_token
 
+  require "json"
+  require "ibm_watson/language_translator_v3"
+  include IBMWatson
+
+
 
   def create
     @post = Post.new(post_params)
+    @post.language = identify_language(@post.description)
     if @post.save
       render :show, status: :created
     else
@@ -25,7 +27,18 @@ class PostsController < ApplicationController
   end
 
   def index
-    @posts = Post.all
+    # getting language from url query
+    user_language = params[:lang]
+    # filtering posts from last 10 days
+    posts = Post.all.where('created_at >= ?', 10.days.ago)
+    @posts = []
+    posts.each do |post|
+      # checking posts language vs user language
+      unless post.language == user_language
+        post.description = translate_string(post.language, user_language, post.description)
+      end
+      @posts << post
+    end
   end
 
   def show

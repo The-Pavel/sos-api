@@ -15,7 +15,9 @@ puts "cleared"
 
 3.times do
   puts 'creating user - post - comment pair'
-  user = User.create(nickname: Faker::Name.name, contact_number: Faker::PhoneNumber.cell_phone, address: Faker::Address.full_address, language: ['zh-cn', 'en-us'].sample)
-  post = Post.create(description: Faker::Quote.famous_last_words, capacity: (2..20).to_a.sample, location: Faker::Address.full_address, contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: ['zh-cn', 'en-us'].sample, user: user)
-  Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['zh-cn', 'en-us'].sample, post: post)
+  user = User.create(nickname: Faker::Name.name, contact_number: Faker::PhoneNumber.cell_phone, address: Faker::Address.full_address, language: ['zh', 'en'].sample)
+  post = Post.create(description: Faker::Quote.famous_last_words, capacity: (2..20).to_a.sample, location: Faker::Address.full_address, contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: ['zh', 'en'].sample, user: user)
+  Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['zh', 'en'].sample, post: post)
 end
+
+Post.create(description: "你好，你过来吧！", capacity: (2..20).to_a.sample, location: Faker::Address.full_address, contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'zh', user: User.first)
