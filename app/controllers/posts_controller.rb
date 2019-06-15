@@ -30,6 +30,9 @@ class PostsController < ApplicationController
 
   def index
     # getting language from url query
+    unless params[:lang].present?
+      @posts = Post.all.where('created_at >= ?', 10.days.ago)
+    end
     user_language = params[:lang]
     # filtering posts from last 10 days
     posts = Post.all.where('created_at >= ?', 10.days.ago)
@@ -47,11 +50,11 @@ class PostsController < ApplicationController
   def show
     user_language = params[:lang]
     unless @post.language == user_language
-      @post.description = translate_string(post.language, user_language, post.description)
-      @post.location = translate_string(post.language, user_language, post.location)
+      @post.description = translate_string(@post.language, user_language, @post.description)
+      @post.location = translate_string(@post.language, user_language, @post.location)
       @post.comments.each do |comment|
         unless comment.language == user_language
-         comment.comment = translate_string(@post.language, user_language, comment.comment)
+         comment.comment = translate_string(comment.language, user_language, comment.comment)
         end
       end
     end

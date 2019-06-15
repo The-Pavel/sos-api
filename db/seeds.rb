@@ -26,5 +26,5 @@ post1 = Post.create(description: "Shanghai", capacity: (2..20).to_a.sample, loca
 
 post2 = Post.create(description: "Beijing", capacity: (2..20).to_a.sample, location: "Tian An Men", contact_number: Faker::PhoneNumber.cell_phone, is_full: [true, false].sample, language: 'en', user: User.first, lat: "39.907333374", long: "116.391082764")
 
-Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['zh', 'en'].sample, post: post1)
-Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['zh', 'en'].sample, post: post2)
+Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['en'].sample, post: post1)
+Comment.create(nickname: Faker::Name.name, comment: Faker::Quote.famous_last_words, language: ['en'].sample, post: post2)
