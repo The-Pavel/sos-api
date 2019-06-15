@@ -10,12 +10,10 @@ class PostsController < ApplicationController
   def create
     @post = Post.new(post_params)
 
-
-
     @post.language = identify_language(@post.description)
     if @post.save
       render :show, status: :created
-      #AMAP save lat/long
+      #AMAP save post lat/long
       addr = @post.location
       address_encode = URI.encode("#{addr}output=JSON&key=27df61d7d7a623d9d3ef412a48ee6218")
       url = "https://restapi.amap.com/v3/geocode/geo?address=#{address_encode}"
@@ -76,7 +74,7 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    params.require(:post).permit(:user_id, :description, :capacity, :location, :language, :contact_number, :is_full, :id)
+    params.require(:post).permit(:user_id, :description, :capacity, :location, :language, :contact_number, :is_full, :id, :lat, :long)
   end
 
   def comment_params
@@ -122,5 +120,23 @@ class PostsController < ApplicationController
   end
 
 #AMAP
-
+      addr = @post.location
+      address_encode = URI.encode("#{addr}output=JSON&key=27df61d7d7a623d9d3ef412a48ee6218")
+      url = "https://restapi.amap.com/v3/geocode/geo?address=#{address_encode}"
+      serialize = open(url).read
+      parse = JSON.parse(serialize)
+      location = parse["geocodes"][0]["location"].split(",")
+      @post.update lat: location[1]
+      @post.update long: location[0]
 end
+
+
+https://restapi.amap.com/v3/direction/walking?origin={origin}&destination={destination}&key=27df61d7d7a623d9d3ef412a48ee6218
+https://restapi.amap.com/v3/direction/walking?origin=116.481028,39.989643&destination=116.434446,39.90816&key=27df61d7d7a623d9d3ef412a48ee6218
+
+origin = "116.481028,39.989643"
+destination = "116.434446,39.90816"
+url = "https://restapi.amap.com/v3/direction/walking?origin=#{origin}&destination=#{destination}&key=27df61d7d7a623d9d3ef412a48ee6218"
+serialize = open(url).read
+parse = JSON.parse(serialize)
+distance = parse["route"]["paths"][0]["distance"]
