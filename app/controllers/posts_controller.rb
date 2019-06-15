@@ -18,7 +18,7 @@ class PostsController < ApplicationController
   end
 
   def add_comment
-    @comment = Comment.create(nickname: User.find(comment_params[:user_id].nickname, comment: comment_params[:comment], post: Post.find(comment_params[:post_id])))
+    @comment = Comment.new(nickname: User.find(comment_params[:user_id]).nickname, comment: comment_params[:comment], post: Post.find(comment_params[:post_id]))
     if @comment.save
       render :index
     else
