@@ -36,16 +36,6 @@ class PostsController < ApplicationController
     head :no_content
   end
 
-  private
-
-  def set_post
-    @post = Post.find(params[:id])
-  end
-
-  def post_params
-    params.require(:post).permit(:description, :capacity, :location, :contact_number, :is_full, :language, :user_id)
-  end
-
   def add_comment
     @comment = Comment.new(nickname: User.find(comment_params[:user_id]).nickname, comment: comment_params[:comment], post: Post.find(comment_params[:post_id]))
     if @comment.save
