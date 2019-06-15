@@ -1,16 +1,11 @@
 class PostsController < ApplicationController
   require "json"
+  require "open-uri"
   require "ibm_watson/language_translator_v3"
   include IBMWatson
 
   before_action :set_post, only: [ :add_comment, :show, :update, :destroy ]
   skip_before_action :verify_authenticity_token
-
-  require "json"
-  require "ibm_watson/language_translator_v3"
-  include IBMWatson
-
-
 
   def create
     @post = Post.new(post_params)
@@ -84,6 +79,8 @@ class PostsController < ApplicationController
   def init_translator
     # returns an instance of the Watson translator
 
+
+#IBM LANGUAGE TRANSLATOR
     creds = {
       "apikey": "lgEFBcnLjSPMPOlr9ODPXSnPHxkUJvBgRERzWJO6NqkP",
       "iam_apikey_description": "Auto-generated for key f9ccb07f-0f5c-4aad-8cac-51b950b33b87",
@@ -118,4 +115,15 @@ class PostsController < ApplicationController
     )
     return translation.result["translations"][0]["translation"]
   end
+
+#AMAP
+@post = Post.find(3)
+p addr = @post.location
+address_encode = URI.encode("#{addr}output=JSON&key=27df61d7d7a623d9d3ef412a48ee6218")
+url = "https://restapi.amap.com/v3/geocode/geo?address=#{address_encode}"
+serialize = open(url).read
+parse = JSON.parse(serialize)
+location = parse["geocodes"][0]["location"].split(",")
+@post.update lat: location[1]
+@post.update long: location[0]
 end
