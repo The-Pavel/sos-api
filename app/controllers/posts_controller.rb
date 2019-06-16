@@ -34,11 +34,11 @@ class PostsController < ApplicationController
       @posts = Post.all.where('created_at >= ?', 10.days.ago)
     end
     user_language = params[:lang]
-    # filtering posts from last 10 days
+    # # filtering posts from last 10 days
     posts = Post.all.where('created_at >= ?', 10.days.ago)
     @posts = []
     posts.each do |post|
-      # checking posts language vs user language
+    #   # checking posts language vs user language
       unless post.language == user_language
         post.description = translate_string(post.language, user_language, post.description)
         post.location = translate_string(post.language, user_language, post.location)
@@ -90,7 +90,7 @@ class PostsController < ApplicationController
     if params[:post].present?
       params.require(:post).permit(:user_id, :description, :capacity, :location, :language, :contact_number, :is_full, :id, :lat, :long)
     else
-      params.permit(:id)
+      params.permit(:id, :lang)
     end
   end
 
