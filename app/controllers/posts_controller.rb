@@ -30,20 +30,21 @@ class PostsController < ApplicationController
 
   def index
     # getting language from url query
-    unless params[:lang].present?
-      @posts = Post.all.where('created_at >= ?', 10.days.ago)
-    end
-    user_language = params[:lang]
-    # filtering posts from last 10 days
-    posts = Post.all.where('created_at >= ?', 10.days.ago)
-    @posts = []
-    posts.each do |post|
-      # checking posts language vs user language
-      unless post.language == user_language
-        post.description = translate_string(post.language, user_language, post.description)
-        post.location = translate_string(post.language, user_language, post.location)
+    if params[:lang].present?
+      user_language = params[:lang]
+      # # filtering posts from last 10 days
+      posts = Post.all.where('created_at >= ?', 10.days.ago)
+      @posts = []
+      posts.each do |post|
+      #   # checking posts language vs user language
+        unless post.language == user_language
+          post.description = translate_string(post.language, user_language, post.description)
+          post.location = translate_string(post.language, user_language, post.location)
+        end
+        @posts << post
       end
-      @posts << post
+    else
+      @posts = Post.all.where('created_at >= ?', 10.days.ago)
     end
   end
 
@@ -90,7 +91,7 @@ class PostsController < ApplicationController
     if params[:post].present?
       params.require(:post).permit(:user_id, :description, :capacity, :location, :language, :contact_number, :is_full, :id, :lat, :long)
     else
-      params.permit(:id)
+      params.permit(:id, :lang)
     end
   end
 
